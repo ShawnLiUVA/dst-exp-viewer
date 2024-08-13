@@ -14,7 +14,7 @@ async function uploadAndConvert() {
 
     try {
         // Replace with your PythonAnywhere URL
-        const response = await fetch('https://your_username.pythonanywhere.com/upload/', {
+        const response = await fetch('https://shawnuva.pythonanywhere.com/upload/', {
             method: 'POST',
             body: formData
         });
