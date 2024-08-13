@@ -1,3 +1,19 @@
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 async function uploadAndConvert() {
     const fileInput = document.getElementById('fileInput');
     const messageDiv = document.getElementById('message');
@@ -12,11 +28,16 @@ async function uploadAndConvert() {
     const formData = new FormData();
     formData.append('file', file);
 
+    const csrftoken = getCookie('csrftoken');
+
     try {
         // Replace with your PythonAnywhere URL
         const response = await fetch('https://shawnuva.pythonanywhere.com/upload/', {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrftoken  // Include the CSRF token in the request headers
+            },
         });
 
         if (response.ok) {
@@ -24,7 +45,8 @@ async function uploadAndConvert() {
             messageDiv.innerHTML = "File converted successfully!";
             imageContainer.innerHTML = `<img src="${result.image_url}" alt="Converted Image">`;
         } else {
-            messageDiv.innerHTML = "Failed to convert the file.";
+            const errorData = await response.json();
+            messageDiv.innerHTML = `Failed to convert the file: ${errorData.error}`;
         }
     } catch (error) {
         console.error("Error:", error);
