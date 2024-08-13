@@ -36,7 +36,8 @@ async function uploadAndConvert() {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRFToken': csrftoken  // Include the CSRF token in the request headers
+                'X-CSRFToken': csrftoken,  // Include the CSRF token in the request headers
+                'Accept': 'application/json',
             },
         });
 
